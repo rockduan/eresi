@@ -337,10 +337,14 @@ elfsh_Sym	*elfsh_get_symbol_by_name(elfshobj_t *file, char *name)
   PROFILER_IN(__FILE__, __FUNCTION__, __LINE__);
 
   /* Check arguments */
-  if (file == NULL || name == NULL)
+  if (file == NULL)
+	  printf("file is null");
+  if (name == NULL)
+  {
+	  printf("name is null");
     PROFILER_ERR(__FILE__, __FUNCTION__, __LINE__, 
 		      "Invalid NULL parameter", NULL);
-
+  }
   /* Setup symtab pointers */
   if (elfsh_get_symtab(file, &size) == NULL)
     PROFILER_ERR(__FILE__, __FUNCTION__, __LINE__, 

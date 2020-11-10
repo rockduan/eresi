@@ -235,9 +235,12 @@ elfshobj_t	  *elfsh_map_obj(char *name)
 
   file = elfsh_load_obj(name);
   if (file == NULL)
+  {
+	  printf("elfsh_load_obj_failed");
     PROFILER_ERR(__FILE__, __FUNCTION__, __LINE__, 
                  "Unable to load object", NULL);
-
+  }
+  printf("elfsh_load_obj_success!");
   file->rights = O_RDWR;
 
   elfsh_read_obj(file);

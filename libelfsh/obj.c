@@ -178,15 +178,23 @@ elfshobj_t		*elfsh_load_obj(char *name)
 
   /* Get the file size on disk */
   if (0 != fstat(file->fd,&file->fstat))
+  {
+	  printf("unable to get fstat(2)");
     PROFILER_ERR(__FILE__, __FUNCTION__, __LINE__, 
 		 "Unable to get fstat(2)", NULL);
-
+  }
   file->hdr = elfsh_get_hdr(file);
   file->rights = O_RDONLY;
-  if (file->hdr == NULL || file->name == NULL)
+  if (file->name == NULL)
+  {
+	  printf("file->name is null kkk\n");
+  }
+  if (file->hdr == NULL)
+  {
+	  printf("unable to get ELF header");
     PROFILER_ERR(__FILE__, __FUNCTION__, __LINE__, 
 		 "Unable to get ELF header", NULL);
-
+  }
   PROFILER_ROUT(__FILE__, __FUNCTION__, __LINE__, (file));
 }
 

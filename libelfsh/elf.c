@@ -590,7 +590,7 @@ void		elfsh_endianize_elfhdr(elfsh_Ehdr *e, char byteorder)
       e->e_shnum     = swap16(e->e_shnum); 
       e->e_shstrndx  = swap16(e->e_shstrndx);
     }
-
+printf("777\n");
     PROFILER_OUT(__FILE__, __FUNCTION__, __LINE__);
 }
 
@@ -730,39 +730,52 @@ int	elfsh_load_hdr(elfshobj_t *file)
 
   PROFILER_IN(__FILE__, __FUNCTION__, __LINE__);
 
+	  printf("elfsh_load_hdr bigin\n");
   if (file->hdr != NULL)
+  {
+	  printf("file->hdr !=NULL in load_hdr \n");
     PROFILER_ROUT(__FILE__, __FUNCTION__, __LINE__, (sizeof(elfsh_Ehdr)));
-
+  }
   XALLOC(__FILE__, __FUNCTION__, __LINE__,data, sizeof(elfsh_Ehdr), -1);
   file->hdr = (elfsh_Ehdr *) data;
   if ((len = read(file->fd, file->hdr, sizeof(elfsh_Ehdr))) <= 0)
     PROFILER_ERR(__FILE__, __FUNCTION__, __LINE__, (char *)PROFILER_ERRORS_ARRAY, 
 		 len);
 
+	  printf("111\n");
   if (config_safemode() && (!file->hdr->e_shnum))
    PROFILER_ERR(__FILE__, __FUNCTION__, __LINE__,
    "file->hdr->e_shnum is not valid", -1); 
   
+	  printf("222\n");
   if (config_safemode() && (!file->hdr->e_shentsize && (file->hdr->e_type != ET_CORE)))
     PROFILER_ERR(__FILE__, __FUNCTION__, __LINE__,
 		 "file->hdr->e_shentsize is not valid", -1); 
 
+	  printf("333\n");
   elfsh_endianize_elfhdr(file->hdr, file->hdr->e_ident[EI_DATA]);
 
   /* If we are in safe mode, we check the ELF header */
   if (config_safemode())
-    elfsh_check_hdr(file);
+  {
+	  printf("config_safemode\n");
+	  elfsh_check_hdr(file);
+  }
 
 #if defined(ERESI32)
   if (file->hdr->e_ident[EI_CLASS] != ELFCLASS32)
 #elif defined(ERESI64)
     if (file->hdr->e_ident[EI_CLASS] != ELFCLASS64)    
 #endif
-      PROFILER_ERR(__FILE__, __FUNCTION__, __LINE__, 
+    {      PROFILER_ERR(__FILE__, __FUNCTION__, __LINE__, 
 		   "Wrong ELFsh configuration for this ELF class",
 		   -1);
 
+	  printf("444\n");
+    }
+  printf("555\n");
   PROFILER_ROUT(__FILE__, __FUNCTION__, __LINE__, (len));
+  printf("666\n");
 }
 
 /**
@@ -775,10 +788,16 @@ void	*elfsh_get_hdr(elfshobj_t *file)
   PROFILER_IN(__FILE__, __FUNCTION__, __LINE__);
 
   if (file->hdr != NULL)
-    PROFILER_ROUT(__FILE__, __FUNCTION__, __LINE__, (file->hdr));
+  {
+	  printf("file->hdr !=NULL \n");
+	  PROFILER_ROUT(__FILE__, __FUNCTION__, __LINE__, (file->hdr));
+  }
   else if (elfsh_load_hdr(file) <= 0)
+  {
+	  printf("Unable to load ELF header\n");
     PROFILER_ERR(__FILE__, __FUNCTION__, __LINE__, 
 		 "Unable to load ELF header", NULL);
+  }
   PROFILER_ROUT(__FILE__, __FUNCTION__, __LINE__, (file->hdr));
 }
 
