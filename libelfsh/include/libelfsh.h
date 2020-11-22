@@ -264,7 +264,7 @@
 #define		ELFSH_SECTION_STAB		22
 #define		ELFSH_SECTION_COMMENT		23
 #define		ELFSH_SECTION_SHSTRTAB		24
-#define		ELFSH_SECTION_SYMTAB		25
+#define		ELFSH_SECTION_SYMTAB		28
 #define		ELFSH_SECTION_STRTAB		26
 #define		ELFSH_SECTION_STABSTR		27
 #define		ELFSH_SECTION_ALTPLT		28
@@ -292,6 +292,9 @@
 #define		ELFSH_SECTION_UNKNOWN		255
 
 /* Some constants */
+/*#define		ERESI32				1*/
+/*#define		ERESI64				2*/
+/*#define		ER_CLASS			4*/
 #define		ELFSH_PLT_ENTRY_SIZE	        16
 #define		ELFSH_SYMTAB_ENTRY_SIZE		sizeof(elfsh_Sym)
 

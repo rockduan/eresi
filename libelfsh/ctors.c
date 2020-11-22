@@ -8,7 +8,7 @@
  *
  */
 #include "libelfsh.h"
-
+#include <string.h>
 
 
 /**
@@ -29,26 +29,33 @@ eresi_Addr      *elfsh_get_ctors(elfshobj_t *file, int *num)
 		      "Invalid NULL parameter", NULL);
 
   /* Find ctors */
-  enew = file->secthash[ELFSH_SECTION_CTORS];
+  printf("find constructor from .systab\n");
+  enew = file->secthash[ELFSH_SECTION_SYMTAB];
   if (enew == NULL)
     {
-      enew = elfsh_get_section_by_name(file, ELFSH_SECTION_NAME_CTORS, 
+      enew = elfsh_get_section_by_name(file, ELFSH_SECTION_NAME_SYMTAB, 
 				      NULL, NULL, NULL);
       if (NULL == enew)
+      {
+	      printf("unable to get ctors by name \n");
 	PROFILER_ERR(__FILE__, __FUNCTION__, __LINE__, 
 			  "Unable to get CTORS by name", NULL);
+      }
     }
-  
+/* printf("enew->shdr=%d\n",enew->shdr);*/
   /* Read ctors */
   if (NULL == enew->data)
     {
       enew->data = elfsh_load_section(file, enew->shdr);
       if (NULL == enew->data)
+      {
+	      printf("unable to load systab");
 	PROFILER_ERR(__FILE__, __FUNCTION__, __LINE__, 
 			  "Unable to load CTORS", NULL);
-      file->secthash[ELFSH_SECTION_CTORS] = enew;
+      }
+      file->secthash[ELFSH_SECTION_SYMTAB] = enew;
     }
-
+  printf("enew->shdr->sh_size=%ld,sizeof(eresi_Addr)=%ld\n",enew->shdr->sh_size,sizeof(eresi_Addr));
   /* Return data */
   if (num != NULL)
     *num = enew->shdr->sh_size / sizeof(eresi_Addr);
@@ -134,14 +141,14 @@ int		elfsh_set_ctors_entry_by_name(elfshobj_t	*file,
 					      eresi_Addr       	new_addr)
 {
   eresi_Addr	*ctors;
-
   PROFILER_IN(__FILE__, __FUNCTION__, __LINE__);
-
   ctors = elfsh_get_ctors_entry_by_name(file, name);
+  printf("name=%s,ctors=%lu\n",name,*ctors);
   if (NULL == ctors)
     PROFILER_ERR(__FILE__, __FUNCTION__, __LINE__,
 		      "Unable to get CTORS entry by name", -1);
   *ctors = new_addr;
+  printf("after set,*ctors=%lu",*ctors);
   PROFILER_ROUT(__FILE__, __FUNCTION__, __LINE__, 0);
 }
 
@@ -180,21 +187,35 @@ eresi_Addr     	*elfsh_get_ctors_entry_by_name(elfshobj_t *file, char *name)
 
   PROFILER_IN(__FILE__, __FUNCTION__, __LINE__);
 
+  printf("elfsh_get_ctors_entry_by_name begin\n");
   /* Sanity checks */
   if (file == NULL || name == NULL)
-    PROFILER_ERR(__FILE__, __FUNCTION__, __LINE__, "Invalid NULL parameter", 
-		   NULL);
+  {
+	  printf("Invalid NULL parameter\n");
+    PROFILER_ERR(__FILE__, __FUNCTION__, __LINE__, "Invalid NULL parameter",NULL);
+  }
   ctors = elfsh_get_ctors(file, &nbr);
   sym = elfsh_get_metasym_by_name(file, name);
-  if (sym == NULL || ctors == NULL)
+  if(ctors == NULL)
+  {
+	  printf("ctors == null\n");
+  }
+  if (sym == NULL)
+  {
+	  printf("sym == NULL\n");
     PROFILER_ERR(__FILE__, __FUNCTION__, __LINE__, 
 		      "Unable to find symbol with this name", NULL);
-
+  }
   /* Find the entry */
   for (idx = 0; idx < nbr; idx++)
     if (ctors[idx] == sym->st_value)
+    {
+	    printf("idx=%dmatches sym->st_value\n",idx);
       PROFILER_ROUT(__FILE__, __FUNCTION__, __LINE__, (ctors + idx));
-  
+    }
+
+  printf("CTORS entry not found dl\n");
+  printf("elfsh_get_ctors_entry_by_name end\n");
   PROFILER_ERR(__FILE__, __FUNCTION__, __LINE__, "CTORS entry not found", 
 		 NULL);
 }

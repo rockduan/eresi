@@ -761,18 +761,22 @@ int	elfsh_load_hdr(elfshobj_t *file)
 	  printf("config_safemode\n");
 	  elfsh_check_hdr(file);
   }
-
+printf("file->hdr->e_ident[EI_CLASS]=%d,ELFCLASS32=%d,ELFCLASS64=%d\n",file->hdr->e_ident[EI_CLASS],ELFCLASS32,ELFCLASS64);
+/*
 #if defined(ERESI32)
   if (file->hdr->e_ident[EI_CLASS] != ELFCLASS32)
-#elif defined(ERESI64)
-    if (file->hdr->e_ident[EI_CLASS] != ELFCLASS64)    
+  {	  
+	  printf("file->hdr->e_ident[EI_CLASS] != ELFCLASS32\n");
+	  PROFILER_ERR(__FILE__, __FUNCTION__, __LINE__,"Wrong ELFsh configuration for this ELF class",-1);
+  }
+  */
+#if defined(ERESI64)
+  if (file->hdr->e_ident[EI_CLASS] != ELFCLASS64)
+  {
+	  printf("file->hdr->e_ident[EI_CLASS] != ELFCLASS64\n");
+	  PROFILER_ERR(__FILE__, __FUNCTION__, __LINE__,"Wrong ELFsh configuration for this ELF class",-1);
+  }	  
 #endif
-    {      PROFILER_ERR(__FILE__, __FUNCTION__, __LINE__, 
-		   "Wrong ELFsh configuration for this ELF class",
-		   -1);
-
-	  printf("444\n");
-    }
   printf("555\n");
   PROFILER_ROUT(__FILE__, __FUNCTION__, __LINE__, (len));
   printf("666\n");

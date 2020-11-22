@@ -9,8 +9,6 @@
  *
  */
 #include "libelfsh.h"
-
-
 #define ELFSH_SYMTAB_HASH_NAME 	"elfsh_symtab_hashbyname"
 
 /**
@@ -333,9 +331,9 @@ elfsh_Sym	*elfsh_get_symbol_by_name(elfshobj_t *file, char *name)
   int		size;
   char		*actual;
   elfshsect_t	*sect;
-
+ 
   PROFILER_IN(__FILE__, __FUNCTION__, __LINE__);
-
+printf("elfsh_get_symbol_by_name begin,name=%s\n",name);
   /* Check arguments */
   if (file == NULL)
 	  printf("file is null");
@@ -390,6 +388,7 @@ elfsh_Sym	*elfsh_get_symbol_by_name(elfshobj_t *file, char *name)
       actual = elfsh_get_symbol_name(file, sym + idx);
       if (actual && !strcmp(actual, name))
 	{
+	  printf("[DEBUG_HASH_BY_NAME] bingo! SYM ITERATE Search by name for %s => %d,sym=%x,idx=%d\n", name, idx,sym,idx);
 #if __DEBUG_HASH_BY_NAME__
 	  printf("[DEBUG_HASH_BY_NAME] SYM ITERATE Search by name for %s => %d\n", 
 		 name, idx);
